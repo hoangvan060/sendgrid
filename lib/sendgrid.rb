@@ -26,7 +26,8 @@ module SendGrid
     base.class_eval do
       class << self
         attr_accessor :default_sg_category, :default_sg_options, :default_subscriptiontrack_text,
-                      :default_footer_text, :default_spamcheck_score, :default_sg_unique_args
+                      :default_footer_text, :default_spamcheck_score, :default_sg_unique_args,
+                      :default_template_id
       end
       attr_accessor :sg_category, :sg_options, :sg_disabled_options, :sg_recipients, :sg_substitutions,
                     :subscriptiontrack_text, :footer_text, :spamcheck_score, :sg_unique_args, :sg_send_at
