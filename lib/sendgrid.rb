@@ -97,6 +97,10 @@ module SendGrid
     def sendgrid_unique_args(unique_args = {})
       self.default_sg_unique_args = unique_args
     end
+    
+    def sendgrid_template_id(template_id)
+      self.default_template_id = template_id
+    end
   end
 
   # Call within mailer method to set the template_id.
@@ -307,8 +311,8 @@ module SendGrid
           end
 
         when :templates
-          if @sg_template_id
-            filters[:templates]['settings']['template_id'] = @sg_template_id
+          if self.class.default_template_id || @sg_template_id
+            filters[:templates]['settings']['template_id'] = @sg_template_id || self.class.default_template_id
           end
       end
     end
