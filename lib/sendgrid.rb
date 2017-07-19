@@ -30,7 +30,8 @@ module SendGrid
                       :default_template_id
       end
       attr_accessor :sg_category, :sg_options, :sg_disabled_options, :sg_recipients, :sg_substitutions,
-                    :subscriptiontrack_text, :footer_text, :spamcheck_score, :sg_unique_args, :sg_send_at
+                    :subscriptiontrack_text, :footer_text, :spamcheck_score, :sg_unique_args, :sg_send_at,
+                    :sg_asm_group_id, :sg_asm_groups_to_display
     end
 
     # NOTE: This commented-out approach may be a "safer" option for Rails 3, but it
@@ -173,6 +174,14 @@ module SendGrid
     options.each { |option| @ganalytics_options << option if VALID_GANALYTICS_OPTIONS.include?(option[0].to_sym) }
   end
   
+  def sendgrid_asm_group_id(group_id)
+    @sg_asm_group_id = group_id
+  end
+  
+  def sendgrid_asm_groups_to_display(groups)
+    @sg_asm_groups_to_display = Array.wrap(groups)
+  end
+  
   # only override the appropriate methods for the current ActionMailer version
   if ActionMailer::Base.respond_to?(:mail)
 
@@ -263,6 +272,15 @@ module SendGrid
     if !enabled_opts.empty? || (@sg_disabled_options && !@sg_disabled_options.empty?)
       filters = filters_hash_from_options(enabled_opts, @sg_disabled_options)
       header_opts[:filters] = filters if filters && !filters.empty?
+    end
+    
+    # Set Suppression Groups
+    if @sg_asm_group_id
+      header_opts[:asm_group_id] = @sg_asm_group_id
+    end
+ 
+    if @sg_asm_groups_to_display && !@sg_asm_groups_to_display.empty?
+      header_opts[:asm_groups_to_display] = @sg_asm_groups_to_display
     end
 
     header_opts.to_json.gsub(/(["\]}])([,:])(["\[{])/, '\\1\\2 \\3')
